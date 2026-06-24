@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # GitHub上のソースコードをGitHub Actionsの実行環境に取得する
+      # GitHub上のソースコードを取得する
       - name: Checkout source code
         uses: actions/checkout@v6
 
@@ -26,6 +26,20 @@ jobs:
           java-version: '17'
           cache: maven
 
-      # Mavenでビルドを実行する
+      # Mavenでアプリケーションをビルドする
       - name: Build with Maven
         run: mvn -B clean package
+
+  docker-build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      # GitHub上のソースコードを取得する
+      - name: Checkout source code
+        uses: actions/checkout@v6
+
+      # Dockerfileを利用してDockerイメージをビルドする
+      - name: Build Docker image
+        run: docker build -t todo-api:ci .
